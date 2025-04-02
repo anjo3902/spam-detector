@@ -21,7 +21,7 @@ df['label'] = df['label'].map({'spam': 1, 'ham': 0})
 # Save the cleaned dataset
 df.to_csv("cleaned_spam_dataset.csv", index=False)
 
-print("✅ Data preprocessing completed. Cleaned dataset saved as 'cleaned_spam_dataset.csv'.")
+print("Data preprocessing completed. Cleaned dataset saved as 'cleaned_spam_dataset.csv'.")
 
 
 
