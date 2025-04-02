@@ -1,10 +1,20 @@
 import pandas as pd
 import pickle
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
+
+# Download NLTK resources
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
 
 # Load cleaned dataset
 df = pd.read_csv("cleaned_spam_dataset.csv")
@@ -12,6 +22,19 @@ df = pd.read_csv("cleaned_spam_dataset.csv")
 # Check if necessary columns exist
 if "message" not in df.columns or "label" not in df.columns:
     raise ValueError("Dataset must contain 'message' and 'label' columns!")
+
+# Text Preprocessing Function
+def preprocess_text(text):
+    text = text.lower()  # Convert to lowercase
+    text = re.sub(r'[^a-zA-Z]', ' ', text)  # Remove punctuation and numbers
+    tokens = word_tokenize(text)  # Tokenization
+    tokens = [word for word in tokens if word not in stopwords.words('english')]  # Remove stopwords
+    lemmatizer = WordNetLemmatizer()
+    tokens = [lemmatizer.lemmatize(word) for word in tokens]  # Lemmatization
+    return ' '.join(tokens)
+
+# Apply preprocessing to messages
+df["message"] = df["message"].apply(preprocess_text)
 
 # Convert text into numerical features using TF-IDF
 vectorizer = TfidfVectorizer(max_features=3000)
